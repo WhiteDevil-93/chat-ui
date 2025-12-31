@@ -13,6 +13,9 @@ on:
         value: ${{ jobs.generate-slug.outputs.slug }}
 
 jobs:
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
   generate-slug:
     runs-on: ubuntu-latest
     outputs:

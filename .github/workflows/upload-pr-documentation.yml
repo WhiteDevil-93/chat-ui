@@ -7,6 +7,9 @@ on:
       - completed
 
 jobs:
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
   build:
     uses: huggingface/doc-builder/.github/workflows/upload_pr_documentation.yml@main
     with:

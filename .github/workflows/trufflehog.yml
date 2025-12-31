@@ -4,6 +4,9 @@ on:
 name: Secret Leaks
 
 jobs:
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
   trufflehog:
     runs-on: ubuntu-latest
     steps:

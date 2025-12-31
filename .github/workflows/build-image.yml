@@ -18,6 +18,9 @@ on:
     types: [published, edited]
 
 jobs:
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
   build-and-publish-image-with-db:
     runs-on:
       group: aws-general-8-plus
