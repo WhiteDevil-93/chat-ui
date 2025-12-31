@@ -7,6 +7,9 @@ on:
       - main
 
 jobs:
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
   lint:
     runs-on: ubuntu-latest
     timeout-minutes: 10

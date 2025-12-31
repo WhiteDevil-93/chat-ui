@@ -3,6 +3,9 @@ on:
   pull_request:
 
 jobs:
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
   branch-slug:
     uses: ./.github/workflows/slugify.yaml
     with:

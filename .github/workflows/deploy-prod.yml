@@ -4,6 +4,9 @@ on:
   workflow_dispatch:
 
 jobs:
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
   build-and-publish-huggingchat-image:
     runs-on: ubuntu-latest
     steps:
