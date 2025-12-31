@@ -1,11 +1,10 @@
 name: Upload PR Documentation
-
-on:
+true:
   workflow_run:
-    workflows: ["Build PR Documentation"]
+    workflows:
+    - Build PR Documentation
     types:
-      - completed
-
+    - completed
 jobs:
   build:
     uses: huggingface/doc-builder/.github/workflows/upload_pr_documentation.yml@main
@@ -14,3 +13,11 @@ jobs:
     secrets:
       hf_token: ${{ secrets.HF_DOC_BUILD_PUSH }}
       comment_bot_token: ${{ secrets.COMMENT_BOT_TOKEN }}
+    timeout-minutes: 30
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read

@@ -1,15 +1,12 @@
 name: Build PR Documentation
-
-on:
+true:
   pull_request:
     paths:
-      - "docs/source/**"
-      - ".github/workflows/build-pr-docs.yml"
-
+    - docs/source/**
+    - .github/workflows/build-pr-docs.yml
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
-
 jobs:
   build:
     uses: huggingface/doc-builder/.github/workflows/build_pr_documentation.yml@main
@@ -18,3 +15,8 @@ jobs:
       pr_number: ${{ github.event.number }}
       package: chat-ui
       additional_args: --not_python_module
+    timeout-minutes: 30
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read

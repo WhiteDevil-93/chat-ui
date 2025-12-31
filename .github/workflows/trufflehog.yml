@@ -1,17 +1,23 @@
-on:
-  push:
-
+true:
+  push: null
 name: Secret Leaks
-
 jobs:
   trufflehog:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Secret Scanning
-        uses: trufflesecurity/trufflehog@main
-        with:
-          extra_args: --results=verified,unknown
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    - name: Secret Scanning
+      uses: trufflesecurity/trufflehog@main
+      with:
+        extra_args: --results=verified,unknown
+    timeout-minutes: 30
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read

@@ -1,72 +1,42 @@
 name: Generate Branch Slug
-
-on:
+true:
   workflow_call:
     inputs:
       value:
-        description: "Value to slugify"
+        description: Value to slugify
         required: true
         type: string
     outputs:
       slug:
-        description: "Slugified value"
+        description: Slugified value
         value: ${{ jobs.generate-slug.outputs.slug }}
-
 jobs:
   generate-slug:
     runs-on: ubuntu-latest
     outputs:
       slug: ${{ steps.slugify.outputs.slug }}
-
     steps:
-      - name: Setup Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: "1.21"
-
-      - name: Generate slug
-        id: slugify
-        run: |
-          # Create working directory
-          mkdir -p $HOME/slugify
-          cd $HOME/slugify
-
-          # Create Go script
-          cat > main.go << 'EOF'
-          package main
-
-          import (
-              "fmt"
-              "os"
-              "github.com/gosimple/slug"
-          )
-
-          func main() {
-              if len(os.Args) < 2 {
-                  fmt.Println("Usage: slugify <text>")
-                  os.Exit(1)
-              }
-
-              text := os.Args[1]
-              slugged := slug.Make(text)
-              fmt.Println(slugged)
-          }
-          EOF
-
-          # Initialize module and install dependency
-          go mod init slugify
-          go mod tidy
-          go get github.com/gosimple/slug
-
-          # Build
-          go build -o slugify main.go
-
-          # Generate slug
-          VALUE="${{ inputs.value }}"
-          echo "Input value: $VALUE"
-
-          SLUG=$(./slugify "$VALUE")
-          echo "Generated slug: $SLUG"
-
-          # Export
-          echo "slug=$SLUG" >> $GITHUB_OUTPUT
+    - name: Setup Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: '1.21'
+    - name: Generate slug
+      id: slugify
+      run: "# Create working directory\nmkdir -p $HOME/slugify\ncd $HOME/slugify\n\
+        \n# Create Go script\ncat > main.go << 'EOF'\npackage main\n\nimport (\n \
+        \   \"fmt\"\n    \"os\"\n    \"github.com/gosimple/slug\"\n)\n\nfunc main()\
+        \ {\n    if len(os.Args) < 2 {\n        fmt.Println(\"Usage: slugify <text>\"\
+        )\n        os.Exit(1)\n    }\n\n    text := os.Args[1]\n    slugged := slug.Make(text)\n\
+        \    fmt.Println(slugged)\n}\nEOF\n\n# Initialize module and install dependency\n\
+        go mod init slugify\ngo mod tidy\ngo get github.com/gosimple/slug\n\n# Build\n\
+        go build -o slugify main.go\n\n# Generate slug\nVALUE=\"${{ inputs.value }}\"\
+        \necho \"Input value: $VALUE\"\n\nSLUG=$(./slugify \"$VALUE\")\necho \"Generated\
+        \ slug: $SLUG\"\n\n# Export\necho \"slug=$SLUG\" >> $GITHUB_OUTPUT\n"
+    timeout-minutes: 30
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read

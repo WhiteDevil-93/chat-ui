@@ -1,11 +1,9 @@
 name: Build documentation
-
-on:
+true:
   push:
     branches:
-      - main
-      - v*-release
-
+    - main
+    - v*-release
 jobs:
   build:
     uses: huggingface/doc-builder/.github/workflows/build_main_documentation.yml@main
@@ -16,3 +14,11 @@ jobs:
     secrets:
       token: ${{ secrets.HUGGINGFACE_PUSH }}
       hf_token: ${{ secrets.HF_DOC_BUILD_PUSH }}
+    timeout-minutes: 30
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
